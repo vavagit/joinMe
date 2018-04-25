@@ -4,10 +4,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.vava.app.model.Event;
+import com.vava.app.model.communication.AccountsManager;
 import com.vava.app.services.EventManagerService;
 
 @RestController
@@ -28,25 +29,31 @@ public class EventController {
 	@Qualifier("eventManager")
 	private EventManagerService service;
 	
+	@Autowired
+	private AccountsManager accountsManager;
+	
 	@GetMapping("/test")
 	public Event getTest() {
 		return new Event();
 	}
 	
 	@GetMapping("/events")
-	public List<Event> getAllEvents(@RequestHeader HttpHeaders header) {
-		List<String> value = header.get("Authorization");
-		for(String a : value)
-			System.out.println(new String(Base64.decodeBase64(a)));
+	public ResponseEntity<List<Event>> getAllEvents(@RequestHeader HttpHeaders header) {
+		
+		List<String> authorizationList = header.get("Authorization");
+		//overenie uzivatela
+		if(accountsManager.authorization(authorizationList)) {
+			System.out.println("Prihlasene");
+		}
+		
 		List<Event> events = new ArrayList<>();
 		events.add(new Event(0, 0, "a", null, null, null));
-		return events;
-		//return service.getAllEvents();
+		return new ResponseEntity<>(events, HttpStatus.OK);
 	}
 	
 	@GetMapping("/events/range/{kilometers}")
-	public List<Event> rangedEvents(@PathVariable int kilometers) {
-		return service.getEventsFromRange(kilometers);
+	public ResponseEntity<List<Event>> rangedEvents(@PathVariable int kilometers) {
+		return new ResponseEntity<>(service.getEventsFromRange(kilometers),HttpStatus.OK);
 	}
 	
 	@GetMapping("/users/{userId}/events")

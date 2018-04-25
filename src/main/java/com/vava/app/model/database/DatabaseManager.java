@@ -6,12 +6,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.stereotype.Component;
 
 /**
  * Vytvorenie datoveho zdroja k databaze. Pre pristup k databaze sa pouziva spring JDBC template
  * 
  * @author erikubuntu
  */
+@Component
 public class DatabaseManager {
 	private static final String CONFIG_PATH = "classpath:/beans/database_configuration.xml";
 	private JdbcTemplate connection;
