@@ -2,13 +2,18 @@ package com.vava.app.services;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vava.app.model.Event;
+import com.vava.app.model.database.DatabaseManager;
 
 @Component("eventManager")
 public class EventManagerService implements EventService{
 
+	@Autowired
+	private DatabaseManager manager;
+	
 	@Override
 	public List<Event> getAllEvents() {
 		return null;
@@ -16,10 +21,10 @@ public class EventManagerService implements EventService{
 
 	@Override
 	public List<Event> getEventsFromRange(int kilometerRadius) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
-
+	
 	@Override
 	public List<Event> getUsersEvent(int userId) {
 		// TODO Auto-generated method stub
@@ -34,7 +39,7 @@ public class EventManagerService implements EventService{
 
 	@Override
 	public boolean createEvent(Event newEvent) {
-		return false;
+		return true;
 		// TODO Auto-generated method stub
 		
 	}

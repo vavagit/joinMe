@@ -1,6 +1,5 @@
 package com.vava.app.controllers;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.vava.app.model.Event;
-import com.vava.app.model.communication.AccountsManager;
+import com.vava.app.model.User;
+import com.vava.app.services.AccountsManagerService;
 import com.vava.app.services.EventManagerService;
 
 @RestController
@@ -30,20 +29,22 @@ public class EventController {
 	private EventManagerService service;
 	
 	@Autowired
-	private AccountsManager accountsManager;
+	private AccountsManagerService accountsManager;
 	
 	@GetMapping("/test")
 	public Event getTest() {
+		User a = new User("email@azet.sk", "stol");
+		accountsManager.createUser(a);
+		//User user = accountsManager.findUserByEmail("tena@gmail.sk");
 		return new Event();
 	}
 	
 	@GetMapping("/events")
 	public ResponseEntity<List<Event>> getAllEvents(@RequestHeader HttpHeaders header) {
-		
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
-		if(accountsManager.authorization(authorizationList)) {
-			System.out.println("Prihlasene");
+		if(!accountsManager.authorization(authorizationList)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
 		List<Event> events = new ArrayList<>();
@@ -52,7 +53,7 @@ public class EventController {
 	}
 	
 	@GetMapping("/events/range/{kilometers}")
-	public ResponseEntity<List<Event>> rangedEvents(@PathVariable int kilometers) {
+	public ResponseEntity<List<Event>> rangedEvents(@PathVariable int kilometers, @RequestHeader HttpHeaders header) {
 		return new ResponseEntity<>(service.getEventsFromRange(kilometers),HttpStatus.OK);
 	}
 	
@@ -61,13 +62,12 @@ public class EventController {
 		return service.getUsersEvent(userId);
 	}
 	
-	@PostMapping("/events/")
+	@PostMapping("/events")
 	public ResponseEntity<Void> createEvent(@RequestBody Event newEvent) {
 		// ak sa podarilo pridat novy event
 		if( service.createEvent(newEvent)) {
-			URI UriLocation = ServletUriComponentsBuilder.fromCurrentRequest().path(
-					"/{id}").buildAndExpand(newEvent.getId()).toUri();
-			return ResponseEntity.created(UriLocation).build();	
+			
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		// nepodarilo sa vytvorit novy event
 		else {
@@ -75,7 +75,7 @@ public class EventController {
 		}
 	}
 	
-	@DeleteMapping("/events/")
+	@DeleteMapping("/events")
 	public ResponseEntity<Void> removeEvent(int eventId) {
 		return null;
 		

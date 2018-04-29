@@ -1,4 +1,4 @@
-package com.vava.app.model.communication;
+package com.vava.app.services;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.vava.app.model.User;
 import com.vava.app.model.database.DatabaseManager;
-
 /**
  * Spravca prihlaseni uzivatelov.Tvori rozhranie na komunikaciu 
  * controllerov a databazy na cinnosti autorizacie a utentifikacie
@@ -19,9 +18,24 @@ import com.vava.app.model.database.DatabaseManager;
  *
  */
 @Component
-public class AccountsManager {
+public class AccountsManagerService implements AccountService{
 	@Autowired
 	private DatabaseManager db;
+	
+	/**
+	 * Funkcia vytvori zaznam v databaze o uzivatelovi.
+	 * @param user {@link User} objekt uzivatela s naplnenymi udajmi
+	 * @return false aj uzivatel existuje alebo nebol vytvoreny inak true
+	 */
+	@Override
+	public boolean createUser(User user) {
+		return db.createUser(user);
+	}
+
+	@Override
+	public boolean login(String email, String password) {
+		return true;
+	}
 	
 	/**
 	 * Funkcia sluzi na autorizaciu pri volani funkcii controllerov. 
@@ -37,31 +51,30 @@ public class AccountsManager {
 				authorizationString += temp;
 		
 		if (authorizationString.startsWith("Basic")) {
-	        // Authorization: Basic base64credentials
-	        String base64Credentials = authorizationString.substring("Basic".length()).trim();
+
+			String base64Credentials = authorizationString.substring("Basic".length()).trim();
 	        String credentials = new String(Base64.getDecoder().decode(base64Credentials),
 	        								Charset.forName("UTF-8"));
-		    // credentials = username:password
-		    final String[] values = credentials.split(":",2);
-		    System.out.println(values[0] + " " + values[1]);
-		    return true;
+
+	        final String[] values = credentials.split(":",2);
+	        User found = findUserByEmail(values[0]);
+	        //uzivatel nebol najdeny
+	        if(found == null)
+	        	return false;
+	        
+	        return found.getPassword().equals(values[1]);
 		}
 		return false;
 	}
-	
-	public boolean isLogedIn(String username) {
-		return true;
-	}
-	
-	
+
 	/**
-	 * Funkcia vytvori zaznam v databaze o uzivatelovi.
-	 * @param user {@link User} objekt uzivatela s naplnenymi udajmi
-	 * @return false aj uzivatel existuje alebo nebol vytvoreny inak true
+	 * Najdenie uzivatela v zdroji udajov podla mena. Naplnenie objektu uzivatela s jeho vsetkymi udajmi
+	 * @return {@link User} ak uzivatel existuje inak null
 	 */
-	public boolean createUser(User user) {
-		
-		return false;
+	@Override
+	public User findUserByEmail(String email) {
+		return db.getUserByEmail(email);
 	}
 	
+
 }
