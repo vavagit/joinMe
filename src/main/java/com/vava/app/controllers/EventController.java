@@ -1,5 +1,7 @@
 package com.vava.app.controllers;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vava.app.model.Event;
+import com.vava.app.model.Location;
 import com.vava.app.model.User;
 import com.vava.app.services.AccountsManagerService;
 import com.vava.app.services.EventManagerService;
@@ -33,9 +36,9 @@ public class EventController {
 	
 	@GetMapping("/test")
 	public Event getTest() {
-		User a = new User("email@azet.sk", "stol");
-		accountsManager.createUser(a);
-		//User user = accountsManager.findUserByEmail("tena@gmail.sk");
+		User user = new User("erik", "password", Date.valueOf(LocalDate.now()), "erik", "maruskin", 
+							(float) 5.0, "0911215140", "Beniakova 5A", new Location(10.0, 10.0));
+		System.out.println(accountsManager.createUser(user));
 		return new Event();
 	}
 	

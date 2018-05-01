@@ -33,8 +33,13 @@ public class AccountsManagerService implements AccountService{
 	}
 
 	@Override
-	public boolean login(String email, String password) {
-		return true;
+	public boolean login(String userName, String password) {
+		if(userName == null || password == null)
+			return false;
+		User user = findUserByUserName(userName);
+		if(user == null)
+			return false;
+		return user.getPassword().equals(password);
 	}
 	
 	/**
@@ -50,6 +55,7 @@ public class AccountsManagerService implements AccountService{
 		for(String temp : authorizationList)
 				authorizationString += temp;
 		
+		// dekodovanie prijateho autorizacneho stringu
 		if (authorizationString.startsWith("Basic")) {
 
 			String base64Credentials = authorizationString.substring("Basic".length()).trim();
@@ -57,12 +63,8 @@ public class AccountsManagerService implements AccountService{
 	        								Charset.forName("UTF-8"));
 
 	        final String[] values = credentials.split(":",2);
-	        User found = findUserByEmail(values[0]);
-	        //uzivatel nebol najdeny
-	        if(found == null)
-	        	return false;
-	        
-	        return found.getPassword().equals(values[1]);
+	        //kontrola existencie uzivatela
+	        return login(values[0],values[1]);
 		}
 		return false;
 	}
@@ -72,8 +74,22 @@ public class AccountsManagerService implements AccountService{
 	 * @return {@link User} ak uzivatel existuje inak null
 	 */
 	@Override
-	public User findUserByEmail(String email) {
-		return db.getUserByEmail(email);
+	public User findUserByUserName(String username) {
+		if(username == null)
+			return null;
+		return db.getUserByUserName(username);
+	}
+
+	/**
+	 * Odstranenie zaregistrovaneho uzivatela.
+	 * @return true ak sa uzivatela podarilo odstranit inak false
+	 */
+	@Override
+	public boolean removeUser(User user) {
+		User found = findUserByUserName(user.getUserName());
+		if(found == null)
+			return false;
+		return db.removeUser(user.getUserName());
 	}
 	
 

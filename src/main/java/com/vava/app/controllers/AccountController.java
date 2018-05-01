@@ -16,12 +16,19 @@ public class AccountController {
 	private AccountsManagerService service;
 	
 	@PostMapping("/login")
-	public ResponseEntity<Boolean> login(@RequestBody User user) {
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	public ResponseEntity<Void> login(@RequestBody User user) {
+		//ak uzivatel existuje a podarilo sa prihlasit
+		if(service.login(user.getUserName(), user.getPassword()))
+			return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<Void>(HttpStatus.CONFLICT);
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<Boolean> register(@RequestBody User user) {
-		return new ResponseEntity<Boolean>(service.createUser(user), HttpStatus.OK);
+	public ResponseEntity<Void> register(@RequestBody User user) {
+		//podarilo sa vytvoril uzivatela
+		if(service.createUser(user)) {
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		}
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 }

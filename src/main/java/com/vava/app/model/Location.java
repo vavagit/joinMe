@@ -33,13 +33,13 @@ public class Location {
 		this.longitude = longitude;
 	}
 
-	public static double calculateDistanceInKilometers(double latitude, double longitude, double otherLat, double ohterLng) {
+	public static double calculateDistanceInKilometers(Location point1, Location point2) {
 
-		double latDistance = Math.toRadians(latitude - otherLat);
-		double lngDistance = Math.toRadians(longitude - ohterLng);
+		double latDistance = Math.toRadians(point1.getLatitude() - point2.getLatitude());
+		double lngDistance = Math.toRadians(point1.getLongitude() - point2.getLongitude());
 
-		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + Math.cos(Math.toRadians(latitude))
-				* Math.cos(Math.toRadians(otherLat)) * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
+		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + Math.cos(Math.toRadians(point1.getLatitude()))
+				* Math.cos(Math.toRadians(point2.getLatitude())) * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
 
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
