@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
+import com.vava.app.model.Event;
 import com.vava.app.model.User;
 
 /**
@@ -93,7 +94,11 @@ public class DatabaseManager {
 		return affected != 0;
 	}
 	
-	public void getUsersEvents(int userId) {
-		connection.query("SELECT events.*, category.sport, category.id as category_id FROM events JOIN category ON category.id = sport_category_id WHERE user_name = ?",new Object[] {userId}, new UserRowMapper());
+	public List<Event> getUsersEvents(int userId) {
+		String query = "SELECT  events.*, c2.sport FROM events "
+				+ "JOIN joined_users u ON events.id = u.id_event "
+				+ "JOIN category c2 ON events.sport_category_id = c2.id "
+				+ "WHERE u.id_user = ?";
+		return connection.query(query,new Object[] {userId}, new EventRowMapper());
 	} 
 }

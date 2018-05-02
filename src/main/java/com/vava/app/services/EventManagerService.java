@@ -16,8 +16,8 @@ public class EventManagerService implements EventService{
 	private DatabaseManager db;
 	
 	@Override
-	public List<Event> getUsersEvent(int userId) {
-		return null;
+	public List<Event> getUsersEvents(int userId) {
+		return db.getUsersEvents(userId);
 	}
 
 	@Override

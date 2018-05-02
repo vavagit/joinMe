@@ -18,7 +18,7 @@ public interface EventService {
 	 * @param userId kontrolovany uzivatel
 	 * @return zoznam eventov
 	 */
-	public List<Event> getUsersEvent(int userId);
+	public List<Event> getUsersEvents(int userId);
 	/**
 	 * Vrati vsetky eventy vytvorene uzivatelom
 	 * @param userId id overovaneho uzivatela

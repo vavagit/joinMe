@@ -13,14 +13,12 @@ public class EventRowMapper implements RowMapper<Event> {
 
 	@Override
 	public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-		int eventId = rs.getInt("id");
-		SportCategory category = new SportCategory(rs.getInt("category_id"), rs.getString("sport"));
-		Event event = new Event(eventId,rs.getInt("max_users"), rs.getString("name"),
+		SportCategory category = new SportCategory(rs.getInt("sport_category_id"), rs.getString("sport"));
+		return new Event(rs.getInt("id"),rs.getInt("max_users"), rs.getString("name"),
 								rs.getString("description"), rs.getDate("event_date"), 
 								rs.getInt("necessary_age"), rs.getInt("user_id_creator"), category, 
 								rs.getString("address"),
 								new Location(rs.getDouble("latitude"), rs.getDouble("longitude")));
-		return event;
 	}
 
 }

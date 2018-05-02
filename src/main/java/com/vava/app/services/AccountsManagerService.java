@@ -30,6 +30,8 @@ public class AccountsManagerService implements AccountService{
 	@Override
 	public User createUser(User user) {
 		User created = db.createUser(user);
+		if(created == null)
+			return null;
 		created.setPassword("");
 		created.setUserName("");
 		return created;
@@ -51,7 +53,7 @@ public class AccountsManagerService implements AccountService{
 			user.setUserName("");
 			return user;
 		}
-		return user;
+		return null;
 	}
 	
 	/**

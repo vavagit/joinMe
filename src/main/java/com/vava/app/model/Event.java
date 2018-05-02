@@ -108,4 +108,14 @@ public class Event {
 	public void setEventLocation(Location eventLocation) {
 		this.eventLocation = eventLocation;
 	}
+
+	@Override
+	public String toString() {
+		return "Event [eventId=" + eventId + ", maxUsersOnEvent=" + maxUsersOnEvent + ", eventName=" + eventName
+				+ ", description=" + description + ", date=" + date + ", necessaryAge=" + necessaryAge + ", creatorId="
+				+ creatorId + ", sportCategory=" + sportCategory + ", address=" + address + ", eventLocation="
+				+ eventLocation + "]";
+	}
+	
+	
 }
