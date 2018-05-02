@@ -16,18 +16,20 @@ public class AccountController {
 	private AccountsManagerService service;
 	
 	@PostMapping("/login")
-	public ResponseEntity<Void> login(@RequestBody User user) {
+	public ResponseEntity<User> login(@RequestBody User user) {
 		//ak uzivatel existuje a podarilo sa prihlasit
-		if(service.login(user.getUserName(), user.getPassword()))
-			return new ResponseEntity<>(HttpStatus.OK);
-		return new ResponseEntity<Void>(HttpStatus.CONFLICT);
+		User logedUser = service.login(user.getUserName(), user.getPassword());
+		if(logedUser != null)
+			return new ResponseEntity<>(logedUser, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<Void> register(@RequestBody User user) {
+	public ResponseEntity<User> register(@RequestBody User user) {
 		//podarilo sa vytvoril uzivatela
-		if(service.createUser(user)) {
-			return new ResponseEntity<>(HttpStatus.CREATED);
+		User createdUser = service.createUser(user);
+		if(createdUser != null){
+			return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
 		}
 		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}

@@ -25,21 +25,33 @@ public class AccountsManagerService implements AccountService{
 	/**
 	 * Funkcia vytvori zaznam v databaze o uzivatelovi.
 	 * @param user {@link User} objekt uzivatela s naplnenymi udajmi
-	 * @return false aj uzivatel existuje alebo nebol vytvoreny inak true
+	 * @return null ak uzivatel existuje alebo nebol vytvoreny inak odkaz na vytvoreneho Usera
 	 */
 	@Override
-	public boolean createUser(User user) {
-		return db.createUser(user);
+	public User createUser(User user) {
+		User created = db.createUser(user);
+		created.setPassword("");
+		created.setUserName("");
+		return created;
 	}
 
+	/**
+	 * @return Ak sa uzivatel uspesne prihlasi objekt s vyplnenymi udajmi okrem mena a 
+	 * 			hesla inak null
+	 */
 	@Override
-	public boolean login(String userName, String password) {
+	public User login(String userName, String password) {
 		if(userName == null || password == null)
-			return false;
+			return null;
 		User user = findUserByUserName(userName);
 		if(user == null)
-			return false;
-		return user.getPassword().equals(password);
+			return null;
+		if(user.getPassword().equals(password)){
+			user.setPassword("");
+			user.setUserName("");
+			return user;
+		}
+		return user;
 	}
 	
 	/**
@@ -64,7 +76,7 @@ public class AccountsManagerService implements AccountService{
 
 	        final String[] values = credentials.split(":",2);
 	        //kontrola existencie uzivatela
-	        return login(values[0],values[1]);
+	        return login(values[0],values[1]) != null;
 		}
 		return false;
 	}
@@ -90,6 +102,12 @@ public class AccountsManagerService implements AccountService{
 		if(found == null)
 			return false;
 		return db.removeUser(user.getUserName());
+	}
+
+	@Override
+	public User getUserDetails(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

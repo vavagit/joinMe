@@ -28,8 +28,8 @@ public class AccountManagerTests {
 	public void createAndRemoveUserTest() {
 		User user = new User("erik", "password", Date.valueOf(LocalDate.now()), "erik", "maruskin", 
 				(float) 5.0, "0911215140", "Beniakova 5A", new Location(10.0, 10.0));
-		assertTrue(service.createUser(user));
-		assertTrue(!service.createUser(user));
+		assertTrue(service.createUser(user) != null);
+		assertTrue(service.createUser(user) == null);
 		assertTrue(service.removeUser(user));
 		assertTrue(!service.removeUser(user));
 	}
@@ -38,11 +38,11 @@ public class AccountManagerTests {
 	public void createRemoveLoginUserTest() {
 		User user = new User("erik", "password", Date.valueOf(LocalDate.now()), "erik", "maruskin", 
 				(float) 5.0, "0911215140", "Beniakova 5A", new Location(10.0, 10.0));
-		assertTrue(service.createUser(user));
-		assertTrue(service.login("erik", "password"));
-		assertTrue(!service.login("erik", "passwod"));
-		assertTrue(!service.login("erika", "password"));
+		assertTrue(service.createUser(user) != null);
+		assertTrue(service.login("erik", "password") != null);
+		assertTrue(service.login("erik", "passwod") == null);
+		assertTrue(service.login("erika", "password") == null);
 		assertTrue(service.removeUser(user));
-		assertTrue(!service.login("erik", "password"));
+		assertTrue(service.login("erik", "password") == null);
 	}
 }

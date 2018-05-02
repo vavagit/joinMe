@@ -48,7 +48,7 @@ public class DatabaseManager {
 		return users.get(0);
 	}
 
-	public boolean createUser(User user) {
+	public User createUser(User user) {
 		//vytvorenie preparedSteatmmentu
 		PreparedStatementSetter setter = new PreparedStatementSetter() {
 			@Override
@@ -67,22 +67,33 @@ public class DatabaseManager {
 		};
 		//ak uzivatelove pouzivatelske meno uz existuje vrat neuspech
 		if(getUserByUserName(user.getUserName()) != null)
-			return false;
+			return null;
 		
 		//vytvorenie uzivatela - insert do databazy
 		try {
 			
 			connection.update("INSERT INTO users VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)", setter);
-			return true;
+			return getUserByUserName(user.getUserName());
 		}catch (DataAccessException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 	}
 	
 	public boolean removeUser(String username) {
+		User user = getUserByUserName(username);
+		if(user == null)
+			return false;
+		//vymazanie eventov uzivatela
+		connection.update("DELETE FROM events WHERE user_id_creator = ?", new Object[] {user.getId()});
+		//vymazanie uzivatela z prihlasenych eventov
+		connection.update("DELETE FROM joined_users WHERE id_user = ?", new Object[] {user.getId()});
 		int affected = connection.update("DELETE FROM users WHERE users.user_name = ?", new Object[] {username});
 		System.out.println("remove user Debug:" + affected);
 		return affected != 0;
 	}
+	
+	public void getUsersEvents(int userId) {
+		connection.query("SELECT events.*, category.sport, category.id as category_id FROM events JOIN category ON category.id = sport_category_id WHERE user_name = ?",new Object[] {userId}, new UserRowMapper());
+	} 
 }

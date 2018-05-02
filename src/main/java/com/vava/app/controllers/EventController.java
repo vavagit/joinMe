@@ -39,7 +39,7 @@ public class EventController {
 		User user = new User("erik", "password", Date.valueOf(LocalDate.now()), "erik", "maruskin", 
 							(float) 5.0, "0911215140", "Beniakova 5A", new Location(10.0, 10.0));
 		System.out.println(accountsManager.createUser(user));
-		return new Event();
+		return null;
 	}
 	
 	@GetMapping("/events")
@@ -51,13 +51,15 @@ public class EventController {
 		}
 		
 		List<Event> events = new ArrayList<>();
-		events.add(new Event(0, 0, "a", null, null, null));
+		//events.add(new Event(0, 0, "a", null, null, null));
 		return new ResponseEntity<>(events, HttpStatus.OK);
 	}
 	
 	@GetMapping("/events/range/{kilometers}")
 	public ResponseEntity<List<Event>> rangedEvents(@PathVariable int kilometers, @RequestHeader HttpHeaders header) {
-		return new ResponseEntity<>(service.getEventsFromRange(kilometers),HttpStatus.OK);
+		//dummy
+		return null;
+		//return new ResponseEntity<>(service.getEventsFromRange(kilometers),HttpStatus.OK);
 	}
 	
 	@GetMapping("/users/{userId}/events")
@@ -93,7 +95,7 @@ public class EventController {
 	@PutMapping("/events/{eventId}")
 	public ResponseEntity<Void> updateEventDetails(@PathVariable int eventId, @RequestBody Event updatedEvent) {
 		//ak sa podaril update prvku
-		if(service.updateEventDetails(eventId, updatedEvent)) {
+		if(service.updateEventDetails(updatedEvent)) {
 			
 		}
 		else {

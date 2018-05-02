@@ -1,75 +1,34 @@
 package com.vava.app.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
 
 public class Event {
 	private int eventId;
 	private int maxUsersOnEvent;
 	private String eventName;
-	private User creator;
+	private String description;
+	private Date date;
+	private int necessaryAge;
+	private int creatorId;
 	private SportCategory sportCategory;
+	private String address;
 	private Location eventLocation;
-	private List<User> acceptedUsers;
-	private List<User> applyingUsers;
 	
-	public Event() {
-		acceptedUsers = new ArrayList<>();
-		applyingUsers = new ArrayList<>();
-	}
-	
-	public Event(int id, int maxUsers, String name, User creator, SportCategory category, Location location) {
-		this();
-		setId(id);
-		setMaxUsersOnEvent(maxUsers);
-		setEventName(name);
-		setCreator(creator);
-		setSportCategory(category);
-		setEventLocation(location);
-	}
-	
-	public boolean isFull() {
-		return maxUsersOnEvent == acceptedUsers.size();
-	}
-	
-	public int getId() {
-		return eventId;
-	}
-	
-	public void setId(int id) {
-		this.eventId = id;
-	}
-	
-	public String getEventName() {
-		return eventName;
-	}
-	public void setEventName(String eventName) {
+	public Event(int eventId, int maxUsersOnEvent, String eventName, String description, Date date, int necessaryAge,
+			int creatorId, SportCategory sportCategory, String address, Location eventLocation) {
+		super();
+		this.eventId = eventId;
+		this.maxUsersOnEvent = maxUsersOnEvent;
 		this.eventName = eventName;
-	}
-
-	public User getCreator() {
-		return creator;
-	}
-
-	public void setCreator(User creator) {
-		this.creator = creator;
-	}
-
-	public SportCategory getSportCategory() {
-		return sportCategory;
-	}
-
-	public void setSportCategory(SportCategory sportCategory) {
+		this.description = description;
+		this.date = date;
+		this.necessaryAge = necessaryAge;
+		this.creatorId = creatorId;
 		this.sportCategory = sportCategory;
-	}
-
-	public Location getEventLocation() {
-		return eventLocation;
-	}
-
-	public void setEventLocation(Location eventLocation) {
+		this.address = address;
 		this.eventLocation = eventLocation;
 	}
+
 	public int getEventId() {
 		return eventId;
 	}
@@ -86,19 +45,67 @@ public class Event {
 		this.maxUsersOnEvent = maxUsersOnEvent;
 	}
 
-	public List<User> getAcceptedUsers() {
-		return acceptedUsers;
+	public String getEventName() {
+		return eventName;
 	}
 
-	public List<User> getApplyingUsers() {
-		return applyingUsers;
+	public void setEventName(String eventName) {
+		this.eventName = eventName;
 	}
-	
-	public void AddAcceptedUser(User user) {
-		acceptedUsers.add(user);
+
+	public String getDescription() {
+		return description;
 	}
-	
-	public void AddApplyingUser(User user) {
-		applyingUsers.add(user);
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public int getNecessaryAge() {
+		return necessaryAge;
+	}
+
+	public void setNecessaryAge(int necessaryAge) {
+		this.necessaryAge = necessaryAge;
+	}
+
+	public int getCreatorId() {
+		return creatorId;
+	}
+
+	public void setCreator(int creatorId) {
+		this.creatorId = creatorId;
+	}
+
+	public SportCategory getSportCategory() {
+		return sportCategory;
+	}
+
+	public void setSportCategory(SportCategory sportCategory) {
+		this.sportCategory = sportCategory;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public Location getEventLocation() {
+		return eventLocation;
+	}
+
+	public void setEventLocation(Location eventLocation) {
+		this.eventLocation = eventLocation;
 	}
 }
