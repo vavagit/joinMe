@@ -100,5 +100,12 @@ public class DatabaseManager {
 				+ "JOIN category c2 ON events.sport_category_id = c2.id "
 				+ "WHERE u.id_user = ?";
 		return connection.query(query,new Object[] {userId}, new EventRowMapper());
-	} 
+	}
+	
+	public List<Event> getEventsCreatedByUser(int userId){
+		String query = "SELECT * FROM events "
+					+ "JOIN category c2 ON events.sport_category_id = c2.id "
+					+ "WHERE events.user_id_creator = ?";
+		return connection.query(query, new Object[] {userId}, new EventRowMapper());
+	}
 }

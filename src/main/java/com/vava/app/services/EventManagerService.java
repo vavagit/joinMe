@@ -42,8 +42,7 @@ public class EventManagerService implements EventService{
 
 	@Override
 	public List<Event> getEventsCreatedByUser(int userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return db.getEventsCreatedByUser(userId);
 	}
 
 	@Override
