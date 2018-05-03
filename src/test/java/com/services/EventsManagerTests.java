@@ -2,7 +2,7 @@ package com.services;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.sql.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vava.app.model.Event;
+import com.vava.app.model.Location;
+import com.vava.app.model.SportCategory;
 import com.vava.app.services.EventManagerService;
 
 @RunWith(SpringRunner.class)
@@ -22,18 +24,8 @@ public class EventsManagerTests {
 	private EventManagerService service;
 	
 	@Test
-	public void usersEventsTest() {
-		List<Event> events = service.getUsersEvents(8);
-//		for(Event current: events)
-//			System.out.println(current);
-		assertTrue(events.size() == 1);
-	}
-
-	@Test
-	public void getEventsCreatedByUser() {
-		List<Event> events = service.getEventsCreatedByUser(789);
-		for(Event current: events)
-			System.out.println(current);
-		assertTrue(events.size() == 0);
+	public void createEventTest() {
+		Event event = new Event(0, 45, "beh", "bude sa behat", new Date(2018, 9, 14), 15, 5, new SportCategory(1, "behanie"), "Beniakova 5a", new Location(10.0, 10.0));
+		assertTrue("pridavam event", service.createEvent(event));
 	}
 }

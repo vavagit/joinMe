@@ -64,7 +64,8 @@ public class EventController {
 	
 	@GetMapping("/users/{userId}/events")
 	public List<Event> getUsersEvents(@PathVariable int userId) {
-		return service.getUsersEvents(userId);
+		//return service.getUsersEvents(userId);
+		return null;
 	}
 	
 	@PostMapping("/events")

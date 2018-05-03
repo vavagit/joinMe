@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.vava.app.model.Event;
 import com.vava.app.model.User;
 import com.vava.app.model.database.DatabaseManager;
 /**
@@ -22,11 +23,6 @@ public class AccountsManagerService implements AccountService{
 	@Autowired
 	private DatabaseManager db;
 	
-	/**
-	 * Funkcia vytvori zaznam v databaze o uzivatelovi.
-	 * @param user {@link User} objekt uzivatela s naplnenymi udajmi
-	 * @return null ak uzivatel existuje alebo nebol vytvoreny inak odkaz na vytvoreneho Usera
-	 */
 	@Override
 	public User createUser(User user) {
 		User created = db.createUser(user);
@@ -36,11 +32,7 @@ public class AccountsManagerService implements AccountService{
 		created.setUserName("");
 		return created;
 	}
-
-	/**
-	 * @return Ak sa uzivatel uspesne prihlasi objekt s vyplnenymi udajmi okrem mena a 
-	 * 			hesla inak null
-	 */
+	
 	@Override
 	public User login(String userName, String password) {
 		if(userName == null || password == null)
@@ -83,10 +75,6 @@ public class AccountsManagerService implements AccountService{
 		return false;
 	}
 
-	/**
-	 * Najdenie uzivatela v zdroji udajov podla mena. Naplnenie objektu uzivatela s jeho vsetkymi udajmi
-	 * @return {@link User} ak uzivatel existuje inak null
-	 */
 	@Override
 	public User findUserByUserName(String username) {
 		if(username == null)
@@ -94,10 +82,6 @@ public class AccountsManagerService implements AccountService{
 		return db.getUserByUserName(username);
 	}
 
-	/**
-	 * Odstranenie zaregistrovaneho uzivatela.
-	 * @return true ak sa uzivatela podarilo odstranit inak false
-	 */
 	@Override
 	public boolean removeUser(User user) {
 		User found = findUserByUserName(user.getUserName());
@@ -107,10 +91,19 @@ public class AccountsManagerService implements AccountService{
 	}
 
 	@Override
-	public User getUserDetails(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public User getUserDetails(int userId) {
+		return db.getUserDetails(userId);
 	}
 	
+
+	@Override
+	public List<Event> getEventsCreatedByUser(int userId) {
+		return db.getEventsCreatedByUser(userId);
+	}
+
+	@Override
+	public List<Event> getUsersEvents(int userId) {
+		return db.getUsersEvents(userId);
+	}
 
 }

@@ -1,7 +1,5 @@
 package com.vava.app.model.database;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -11,7 +9,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
@@ -50,22 +47,6 @@ public class DatabaseManager {
 	}
 
 	public User createUser(User user) {
-		//vytvorenie preparedSteatmmentu
-		PreparedStatementSetter setter = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setString(1, user.getUserName());
-				ps.setString(2, user.getPassword());
-				ps.setDate(3, user.getRegisteredAt());
-				ps.setString(4, user.getName());
-				ps.setString(5, user.getLastName());
-				ps.setDouble(6, user.getRating());
-				ps.setString(7, user.getContact());
-				ps.setString(8, user.getAddress());
-				ps.setString(9, user.getAddressLocation().getLongitude() + "");
-				ps.setString(10, user.getAddressLocation().getLatitude() + "");
-			}
-		};
 		//ak uzivatelove pouzivatelske meno uz existuje vrat neuspech
 		if(getUserByUserName(user.getUserName()) != null)
 			return null;
@@ -73,7 +54,7 @@ public class DatabaseManager {
 		//vytvorenie uzivatela - insert do databazy
 		try {
 			
-			connection.update("INSERT INTO users VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)", setter);
+			connection.update("INSERT INTO users VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)", new UserStatementSetter(user));
 			return getUserByUserName(user.getUserName());
 		}catch (DataAccessException e) {
 			e.printStackTrace();
@@ -107,5 +88,31 @@ public class DatabaseManager {
 					+ "JOIN category c2 ON events.sport_category_id = c2.id "
 					+ "WHERE events.user_id_creator = ?";
 		return connection.query(query, new Object[] {userId}, new EventRowMapper());
+	}
+	
+	public User getUserDetails(int userId) {
+		String query = "SELECT * FROM users WHERE id = ?;";
+		List<User> users = connection.query(query, new Object[] {userId}, new UserRowMapper());			
+		if(users.isEmpty())
+			return null;
+		User user = users.get(0);
+		user.setPassword("");
+		return user;
+	}
+	
+	public boolean createEvent(Event newEvent){
+		int affected;
+		try {
+			affected = connection.update("INSERT INTO events VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)", new EventStatementSetter(newEvent));
+		} catch(DataAccessException exception) {
+			exception.printStackTrace();
+			return false;
+		}
+		return affected > 0;
+	}
+	
+	public boolean removeEvent(int eventId) {
+		int affected = connection.update("DELETE FROM events WHERE events.id = ?", new Object[] {eventId});
+		return affected > 0;
 	}
 }

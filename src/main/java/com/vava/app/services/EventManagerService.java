@@ -14,11 +14,6 @@ public class EventManagerService implements EventService{
 
 	@Autowired
 	private DatabaseManager db;
-	
-	@Override
-	public List<Event> getUsersEvents(int userId) {
-		return db.getUsersEvents(userId);
-	}
 
 	@Override
 	public Event getEventDetails(int eventId) {
@@ -27,22 +22,17 @@ public class EventManagerService implements EventService{
 
 	@Override
 	public boolean createEvent(Event newEvent) {
-		return true;		
+		return db.createEvent(newEvent);	
 	}
 
 	@Override
-	public void removeEvent(int eventId) {
-		
+	public boolean removeEvent(int eventId) {
+		return db.removeEvent(eventId);
 	}
 
 	@Override
 	public List<Event> getEventsFromRange(int kilometerRadius, Location location) {
 		return null;
-	}
-
-	@Override
-	public List<Event> getEventsCreatedByUser(int userId) {
-		return db.getEventsCreatedByUser(userId);
 	}
 
 	@Override

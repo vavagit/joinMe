@@ -14,19 +14,6 @@ public interface EventService {
 	 */
 	public List<Event> getEventsFromRange(int kilometerRadius, Location location);
 	/**
-	 * Vyhlada eventy ktorych sa zucasnuje uzivatel
-	 * @param userId kontrolovany uzivatel
-	 * @return zoznam eventov
-	 */
-	public List<Event> getUsersEvents(int userId);
-	/**
-	 * Vrati vsetky eventy vytvorene uzivatelom
-	 * @param userId id overovaneho uzivatela
-	 * @return list hladanych eventov
-	 */
-	public List<Event> getEventsCreatedByUser(int userId);
-	
-	/**
 	 *
 	 * @param eventId id eventu
 	 * @return detaily o hladanom evente 
@@ -43,8 +30,9 @@ public interface EventService {
 	/**
 	 * Odstranenie eventu podla id
 	 * @param eventId
+	 * @return true ak sa podarilo odstranit event inak false
 	 */
-	public void removeEvent(int eventId);
+	public boolean removeEvent(int eventId);
 	
 	/**
 	 * Zmena vlastnosti eventu

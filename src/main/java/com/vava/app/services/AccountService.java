@@ -1,11 +1,49 @@
 package com.vava.app.services;
 
+import java.util.List;
+
+import com.vava.app.model.Event;
 import com.vava.app.model.User;
 
 public interface AccountService {
+	/**
+	 * Funkcia vytvori zaznam v databaze o uzivatelovi.
+	 * @param user {@link User} objekt uzivatela s naplnenymi udajmi
+	 * @return null ak uzivatel existuje alebo nebol vytvoreny inak odkaz na vytvoreneho Usera
+	 */
 	public User createUser(User user);
+	/**
+	 * @return Ak sa uzivatel uspesne prihlasi objekt s vyplnenymi udajmi okrem mena a 
+	 * 			hesla inak null
+	 */
 	public User login(String username, String password);
+	/**
+	 * Najdenie uzivatela v zdroji udajov podla mena. Naplnenie objektu uzivatela s jeho vsetkymi udajmi
+	 * @return {@link User} ak uzivatel existuje inak null
+	 */
 	public User findUserByUserName(String name);
+
+	/**
+	 * Vyhladanie zaznamu v databaze o hladonom uzivatelovi
+	 * @param id id hladaneho uzivatela
+	 * @return {@link User} s vyplnenymi udajmi
+	 */
 	public User getUserDetails(int id);
+	/**
+	 * Odstranenie zaregistrovaneho uzivatela.
+	 * @return true ak sa uzivatela podarilo odstranit inak false
+	 */
 	public boolean removeUser(User user);
+	/**
+	 * Vyhlada eventy ktorych sa zucasnuje uzivatel
+	 * @param userId kontrolovany uzivatel
+	 * @return zoznam eventov
+	 */
+	public List<Event> getUsersEvents(int userId);
+	/**
+	 * Vrati vsetky eventy vytvorene uzivatelom
+	 * @param userId id overovaneho uzivatela
+	 * @return list hladanych eventov
+	 */
+	public List<Event> getEventsCreatedByUser(int userId);
 }

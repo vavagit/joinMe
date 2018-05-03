@@ -1,9 +1,10 @@
 package com.services;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.vava.app.model.Event;
 import com.vava.app.model.Location;
 import com.vava.app.model.User;
 import com.vava.app.services.AccountsManagerService;
@@ -44,5 +46,26 @@ public class AccountManagerTests {
 		assertTrue(service.login("erika", "password") == null);
 		assertTrue(service.removeUser(user));
 		assertTrue(service.login("erik", "password") == null);
+	}
+	
+	@Test
+	public void usersEventsTest() {
+		List<Event> events = service.getUsersEvents(8);
+		assertTrue(events.size() == 1);
+	}
+
+	@Test
+	public void getEventsCreatedByUserTest() {
+		List<Event> events = service.getEventsCreatedByUser(789);
+		assertTrue(events.size() == 0);
+	}
+	
+	@Test
+	public void userDetailsTest() {
+		User user = service.getUserDetails(5);
+		System.out.println(user);
+		assertTrue(user != null);
+		user = service.getUserDetails(456);
+		assertTrue(user == null);
 	}
 }
