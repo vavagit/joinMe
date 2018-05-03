@@ -17,6 +17,8 @@ public class Location {
 		longitude = lon;
 	}
 
+	public Location() {}
+	
 	public double getLatitude() {
 		return latitude;
 	}

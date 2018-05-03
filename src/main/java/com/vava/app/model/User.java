@@ -27,6 +27,11 @@ public class User {
 		this.addressLocation = addressLocation;
 	}
 	
+	public User(String username, String password) {
+		this.userName = username;
+		this.password = password;
+	}
+	
 	public User() {}
 
 	public int getId() {

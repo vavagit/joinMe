@@ -17,6 +17,7 @@ public class AccountController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestBody User user) {
+		System.out.println("Prichadzajuca sprava" + user);
 		//ak uzivatel existuje a podarilo sa prihlasit
 		User logedUser = service.login(user.getUserName(), user.getPassword());
 		if(logedUser != null)

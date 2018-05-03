@@ -9,6 +9,8 @@ public class SportCategory {
 		this.sport = sport;
 	}
 	
+	public SportCategory() {}
+	
 	public int getId() {
 		return id;
 	}
