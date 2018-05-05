@@ -2,7 +2,6 @@ package com.vava.app.controllers;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,48 +41,60 @@ public class EventController {
 		return null;
 	}
 	
-	@GetMapping("/events")
-	public ResponseEntity<List<Event>> getAllEvents(@RequestHeader HttpHeaders header) {
+	@GetMapping("/events/{radius}")
+	public ResponseEntity<List<Event>> getAllEvents(@PathVariable int radius, @RequestBody Location location, @RequestHeader HttpHeaders header) {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!accountsManager.authorization(authorizationList)) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
-		List<Event> events = new ArrayList<>();
-		//events.add(new Event(0, 0, "a", null, null, null));
+		List<Event> events = service.getEventsFromRange(radius, location);
 		return new ResponseEntity<>(events, HttpStatus.OK);
 	}
 	
-	@GetMapping("/events/range/{kilometers}")
-	public ResponseEntity<List<Event>> rangedEvents(@PathVariable int kilometers, @RequestHeader HttpHeaders header) {
-		//dummy
-		return null;
-		//return new ResponseEntity<>(service.getEventsFromRange(kilometers),HttpStatus.OK);
-	}
-	
-	@GetMapping("/users/{userId}/events")
-	public List<Event> getUsersEvents(@PathVariable int userId) {
-		//return service.getUsersEvents(userId);
-		return null;
+	@GetMapping("/event/{eventId}")
+	public ResponseEntity<Event> getEventDetails(@PathVariable int eventId, @RequestHeader HttpHeaders header) {
+		List<String> authorizationList = header.get("Authorization");
+		//overenie uzivatela
+		if(!accountsManager.authorization(authorizationList)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		
+		return new ResponseEntity<>(service.getEventDetails(eventId), HttpStatus.OK);
 	}
 	
 	@PostMapping("/events")
-	public ResponseEntity<Void> createEvent(@RequestBody Event newEvent) {
+	public ResponseEntity<Void> createEvent(@RequestBody Event newEvent, @RequestHeader HttpHeaders header) {
+		List<String> authorizationList = header.get("Authorization");
+		//overenie uzivatela
+		if(!accountsManager.authorization(authorizationList)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		
 		// ak sa podarilo pridat novy event
 		if( service.createEvent(newEvent)) {
-			
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		// nepodarilo sa vytvorit novy event
 		else {
-			return ResponseEntity.noContent().build();
+			return new ResponseEntity<Void>(HttpStatus.CONFLICT);
 		}
 	}
 	
 	@DeleteMapping("/events")
-	public ResponseEntity<Void> removeEvent(int eventId) {
-		return null;
+	public ResponseEntity<Void> removeEvent(@RequestBody int eventId, @RequestHeader HttpHeaders header) {
+		List<String> authorizationList = header.get("Authorization");
+		//overenie uzivatela
+		if(!accountsManager.authorization(authorizationList)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		
+		if(service.removeEvent(eventId))
+			return new ResponseEntity<>(HttpStatus.OK);
+		else {
+			return new ResponseEntity<Void>(HttpStatus.CONFLICT);
+		}
 		
 	}
 	
@@ -93,16 +104,15 @@ public class EventController {
 	 * @param updatedEvent - objekt obsahujuci updateovane udaje o aktualnom evente
 	 * @return
 	 */
-	@PutMapping("/events/{eventId}")
-	public ResponseEntity<Void> updateEventDetails(@PathVariable int eventId, @RequestBody Event updatedEvent) {
-		//ak sa podaril update prvku
-		if(service.updateEventDetails(updatedEvent)) {
-			
+	@PutMapping("/events")
+	public ResponseEntity<Void> updateEventDetails(@PathVariable int eventId, @RequestBody Event updatedEvent, @RequestHeader HttpHeaders header) {
+		List<String> authorizationList = header.get("Authorization");
+		//overenie uzivatela
+		if(!accountsManager.authorization(authorizationList)) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		else {
-			
-		}
-		return null;
+		service.updateEventDetails(updatedEvent);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 }

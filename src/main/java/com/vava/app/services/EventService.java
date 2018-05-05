@@ -37,7 +37,6 @@ public interface EventService {
 	/**
 	 * Zmena vlastnosti eventu
 	 * @param updatedEvent objekt eventu so zmenenymi udajmi
-	 * @return true ak sa podarilo zmenit udaje inak false
 	 */
-	public boolean updateEventDetails(Event updatedEvent);
+	public void updateEventDetails(Event updatedEvent);
 }

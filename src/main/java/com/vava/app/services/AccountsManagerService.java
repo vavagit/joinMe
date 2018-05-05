@@ -75,7 +75,12 @@ public class AccountsManagerService implements AccountService{
 		return false;
 	}
 
-	@Override
+	/**
+	 * Najdenie uzivatela v zdroji udajov podla mena. Naplnenie objektu uzivatela s
+	 * jeho vsetkymi udajmi
+	 * 
+	 * @return {@link User} ak uzivatel existuje inak null
+	 */
 	public User findUserByUserName(String username) {
 		if(username == null)
 			return null;
@@ -104,6 +109,16 @@ public class AccountsManagerService implements AccountService{
 	@Override
 	public List<Event> getUsersEvents(int userId) {
 		return db.getUsersEvents(userId);
+	}
+
+	@Override
+	public boolean applyToEvent(int userId, int eventId) {
+		return db.addUserToEvent(userId, eventId);
+	}
+	
+	@Override
+	public boolean removeApplicationToEvent(int userId, int eventId) {
+		return db.removeUserFromEvent(userId, eventId);
 	}
 
 }

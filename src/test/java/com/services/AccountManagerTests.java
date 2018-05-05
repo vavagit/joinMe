@@ -26,7 +26,7 @@ public class AccountManagerTests {
 	@Autowired
 	private AccountsManagerService service;
 	
-	@Test
+	//@Test
 	public void createAndRemoveUserTest() {
 		User user = new User("erik", "password", Date.valueOf(LocalDate.now()), "erik", "maruskin", 
 				(float) 5.0, "0911215140", "Beniakova 5A", new Location(10.0, 10.0));
@@ -36,7 +36,7 @@ public class AccountManagerTests {
 		assertTrue(!service.removeUser(user));
 	}
 
-	@Test
+	//@Test
 	public void createRemoveLoginUserTest() {
 		User user = new User("erik", "password", Date.valueOf(LocalDate.now()), "erik", "maruskin", 
 				(float) 5.0, "0911215140", "Beniakova 5A", new Location(10.0, 10.0));
@@ -48,24 +48,34 @@ public class AccountManagerTests {
 		assertTrue(service.login("erik", "password") == null);
 	}
 	
-	@Test
+	//@Test
 	public void usersEventsTest() {
 		List<Event> events = service.getUsersEvents(8);
 		assertTrue(events.size() == 1);
 	}
 
-	@Test
+	//@Test
 	public void getEventsCreatedByUserTest() {
 		List<Event> events = service.getEventsCreatedByUser(789);
 		assertTrue(events.size() == 0);
 	}
 	
-	@Test
+	//@Test
 	public void userDetailsTest() {
 		User user = service.getUserDetails(5);
 		System.out.println(user);
 		assertTrue(user != null);
 		user = service.getUserDetails(456);
 		assertTrue(user == null);
+	}
+	
+	@Test
+	public void applyToEventTest() {
+		int userId = 5;
+		int eventId = 7;
+		assertTrue(service.applyToEvent(userId, eventId));
+		assertTrue(!service.applyToEvent(userId, eventId));
+		assertTrue(service.removeApplicationToEvent(userId, eventId));
+		assertTrue(!service.removeApplicationToEvent(userId, eventId));
 	}
 }

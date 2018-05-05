@@ -6,7 +6,7 @@
 <bean id="dataSource"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://192.168.0.14:5432/joinme" />
+        <property name="url" value="jdbc:postgresql://25.19.199.1:5432/joinme" />
         <property name="username" value="postgres" />
         <property name="password" value="dbs2018" />
         <!--<property name="socketTimeout" value="10"/>-->

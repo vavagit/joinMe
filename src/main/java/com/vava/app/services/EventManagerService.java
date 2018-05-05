@@ -1,5 +1,6 @@
 package com.vava.app.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class EventManagerService implements EventService{
 
 	@Override
 	public Event getEventDetails(int eventId) {
-		return null;
+		return db.getEventDetails(eventId);
 	}
 
 	@Override
@@ -32,13 +33,38 @@ public class EventManagerService implements EventService{
 
 	@Override
 	public List<Event> getEventsFromRange(int kilometerRadius, Location location) {
-		return null;
+		//vyberanie prvkov z databazy po 1000
+		//skontroluje sa ci je event v hladanom rozsahu
+		//vyberanie sa ukonci ak databaza vrati 0 prvkov - boli prezrete vsetky udaje,
+		//alebo ak je presiahnuty maximalny pocet eventov na vratenie
+		int increase = 1000;
+		int maxEventsToReturn = 1000;
+		
+		int offset = 0;
+		List<Event> selectedEvents = new ArrayList<>();
+		while(true) {
+			List<Event> events = db.getEvents(increase, offset);
+			
+			if(events.size() == 0)
+				return selectedEvents;
+			
+			//kontrola vzdialenosti eventu od zadaneho miesta
+			for(Event event : events) {
+				int distance = Location.calculateDistanceInKilometers(event.getEventLocation(), location);
+				//ak je event v radiuse pridaj ho k hladanym
+				if(distance <= kilometerRadius)
+					selectedEvents.add(event);
+				//ak bol zoznam naplneny
+				if(maxEventsToReturn == selectedEvents.size())
+					return selectedEvents;
+			}
+			offset += increase;
+		}
 	}
 
 	@Override
-	public boolean updateEventDetails(Event updatedEvent) {
-		// TODO Auto-generated method stub
-		return false;
+	public void updateEventDetails(Event updatedEvent) {
+		db.updateEventDetails(updatedEvent);
 	}
 
 }
