@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -14,6 +16,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
+import com.vava.app.controllers.EventController;
 import com.vava.app.model.Event;
 import com.vava.app.model.User;
 
@@ -26,7 +29,8 @@ import com.vava.app.model.User;
 public class DatabaseManager {
 	private static final String CONFIG_PATH = "classpath:/beans/databaseConfiguration.xml";
 	private JdbcTemplate connection;
-	
+    private static Logger logger = LogManager.getLogger(DatabaseManager.class);
+
 	public DatabaseManager() {
 		ApplicationContext context = new ClassPathXmlApplicationContext(CONFIG_PATH);
 		DataSource source = context.getBean("dataSource", DriverManagerDataSource.class);
@@ -45,6 +49,7 @@ public class DatabaseManager {
 		if(users ==  null || users.isEmpty()) {
 			return null;
 		}
+		logger.fatal("boj sa skonci zajtra");
 		return users.get(0);
 	}
 

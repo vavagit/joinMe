@@ -15,6 +15,8 @@ public class EventManagerService implements EventService{
 
 	@Autowired
 	private DatabaseManager db;
+	@Autowired
+	private PropertyManager manager;
 
 	@Override
 	public Event getEventDetails(int eventId) {
@@ -39,6 +41,13 @@ public class EventManagerService implements EventService{
 		//alebo ak je presiahnuty maximalny pocet eventov na vratenie
 		int increase = 1000;
 		int maxEventsToReturn = 1000;
+		
+		try {
+			increase = Integer.parseInt(manager.getProperty("increase"));
+			maxEventsToReturn = Integer.parseInt(manager.getProperty("maxEventsToReturn"));
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
 		
 		int offset = 0;
 		List<Event> selectedEvents = new ArrayList<>();

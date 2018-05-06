@@ -46,7 +46,7 @@ public class AccountController {
 		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
-	@GetMapping("/users/${userId}")
+	@GetMapping("/users/{userId}")
 	public ResponseEntity<User> getUserDetails(@PathVariable int userId, @RequestHeader HttpHeaders header){
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
