@@ -29,7 +29,7 @@ public class EventController {
 	@Qualifier("eventManager")
 	private EventManagerService service;
 
-    private static Logger logger = LogManager.getLogger(EventController.class);
+    private Logger logger = LogManager.getLogger(EventController.class);
     
 	@Autowired
 	private AccountsManagerService accountsManager;
@@ -51,9 +51,11 @@ public class EventController {
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("getAllEvents, Autorizacia neuspesna, ziadane: poloha: " + location + " radius: " + radius);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
+		logger.info("getAllEvents, ziadane: poloha: " + location + " radius: " + radius);
 		List<Event> events = service.getEventsFromRange(radius, location);
 		return new ResponseEntity<>(events, HttpStatus.OK);
 	}
@@ -63,9 +65,11 @@ public class EventController {
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("getEventDetails, Autorizacia neuspesna, ziadane: " + eventId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-
+		
+		logger.info("getEventDetails, ziadane: " + eventId);
 		return new ResponseEntity<>(service.getEventDetails(eventId), HttpStatus.OK);
 	}
 
@@ -74,15 +78,18 @@ public class EventController {
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("createEvent, Autorizacia neuspesna");
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
 		// ak sa podarilo pridat novy event
 		if (service.createEvent(newEvent)) {
+			logger.info("createEvent, vytvorenie noveho eventu uspesne");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		// nepodarilo sa vytvorit novy event
 		else {
+			logger.info("createEvent, vytvorenie noveho eventu neuspesne");
 			return new ResponseEntity<Void>(HttpStatus.CONFLICT);
 		}
 	}
@@ -92,12 +99,16 @@ public class EventController {
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("removeEvent, Autorizacia neuspesna, ziadane: " + eventId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		if (service.removeEvent(eventId))
+		if (service.removeEvent(eventId)) {
+			logger.info("removeEvent, odstranenie eventu " + eventId + " uspesne");
 			return new ResponseEntity<>(HttpStatus.OK);
+		}
 		else {
+			logger.info("removeEvent, odstranenie eventu " + eventId + " neuspesne");
 			return new ResponseEntity<Void>(HttpStatus.CONFLICT);
 		}
 
@@ -118,9 +129,11 @@ public class EventController {
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("updateEventDetails, Autorizacia neuspesna, ziadane: " + eventId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		service.updateEventDetails(updatedEvent);
+		logger.info("updateEventDetails, zmena udajov: eventId " + eventId + " dokoncena");
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

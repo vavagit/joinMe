@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,13 +25,18 @@ public class AccountsManagerService implements AccountService{
 	@Autowired
 	private DatabaseManager db;
 	
+    private Logger logger = LogManager.getLogger(AccountsManagerService.class);
+ 
 	@Override
 	public User createUser(User user) {
 		User created = db.createUser(user);
-		if(created == null)
+		if(created == null) {
+			logger.debug("createUser, Uzivatel nebol vytvoreny");
 			return null;
+		}
 		created.setPassword("");
 		created.setUserName("");
+		logger.debug("createUser, Uzivatel " + created.getId() + "vytvoreny");
 		return created;
 	}
 	
@@ -38,13 +45,17 @@ public class AccountsManagerService implements AccountService{
 		if(userName == null || password == null)
 			return null;
 		User user = findUserByUserName(userName);
-		if(user == null)
+		if(user == null) {
+			logger.debug("login, Uzivatel " + userName + " nenajdeny");
 			return null;
+		}
 		if(user.getPassword().equals(password)){
 			user.setPassword("");
 			user.setUserName("");
+			logger.debug("login, Uzivatel " + userName + " autentifikacia uspesna");
 			return user;
 		}
+		logger.debug("login, Uzivatel " + userName + " zle heslo");
 		return null;
 	}
 	
@@ -67,11 +78,12 @@ public class AccountsManagerService implements AccountService{
 			String base64Credentials = authorizationString.substring("Basic".length()).trim();
 	        String credentials = new String(Base64.getDecoder().decode(base64Credentials),
 	        								Charset.forName("UTF-8"));
-
+	        logger.debug("authorization, dekodovanie");
 	        final String[] values = credentials.split(":",2);
 	        //kontrola existencie uzivatela
 	        return login(values[0],values[1]) != null;
 		}
+        logger.debug("authorization, nerozpoznany format: " + authorizationString);
 		return false;
 	}
 
@@ -90,8 +102,11 @@ public class AccountsManagerService implements AccountService{
 	@Override
 	public boolean removeUser(User user) {
 		User found = findUserByUserName(user.getUserName());
-		if(found == null)
+		if(found == null) {
+			logger.debug("removeUser, Pokus o odstranenie neexistujuceho uzivatela");
 			return false;
+		}
+		logger.debug("removeUser, Uzivatel " + user.getId() + " odstraneny");
 		return db.removeUser(user.getUserName());
 	}
 

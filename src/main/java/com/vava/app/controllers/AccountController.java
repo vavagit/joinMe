@@ -2,6 +2,8 @@ package com.vava.app.controllers;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,13 +25,17 @@ public class AccountController {
 	@Autowired
 	private AccountsManagerService service;
 	
+    private Logger logger = LogManager.getLogger(AccountController.class);
+
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestBody User user) {
-		System.out.println("Prichadzajuca sprava" + user);
 		//ak uzivatel existuje a podarilo sa prihlasit
 		User logedUser = service.login(user.getUserName(), user.getPassword());
-		if(logedUser != null)
+		if(logedUser != null) {
+			logger.info("Prihlasenie uzivatela: " + logedUser.getId() + " uspesne");
 			return new ResponseEntity<>(logedUser, HttpStatus.OK);
+		}
+		logger.info("Prihlasenie uzivatela: " + user.getUserName() + " neuspesne");
 		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
@@ -38,11 +44,10 @@ public class AccountController {
 		//podarilo sa vytvoril uzivatela
 		User createdUser = service.createUser(user);
 		if(createdUser != null){
-			System.out.println("Uzivatel zaregistrovany: ");
-			System.out.println(createdUser);
+			logger.info("Registracia uzivatela: " + createdUser.getId() + " uspesna");
 			return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
 		}
-		System.out.println("registracia sa nepodarila");
+		logger.info("Registracia uzivatela: " + user.getName() + " neuspesna");
 		return new ResponseEntity<>(HttpStatus.CONFLICT);
 	}
 	
@@ -51,8 +56,10 @@ public class AccountController {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
+			logger.info("UserDetails, Autorizacia neuspesna, ziadane: " + userId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
+		logger.info("UserDetails, ziadane: " + userId);
 		return new ResponseEntity<User>(service.getUserDetails(userId), HttpStatus.OK);		
 	}
 	
@@ -61,13 +68,18 @@ public class AccountController {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
+			logger.info("removeUser, Autorizacia neuspesna, ziadane: " + user.getId());
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
-		if(service.removeUser(user))
+		if(service.removeUser(user)) {
+			logger.info("removeUser, vymazanie uzivatela " + user.getId() + " uspesne");
 			return new ResponseEntity<>(HttpStatus.OK);
-		else
+		}
+		else {
+			logger.info("removeUser, vymazanie uzivatela " + user.getId() + " neuspesne");
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 	}
 	
 	@GetMapping("/users/{userId}/events")
@@ -75,9 +87,11 @@ public class AccountController {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
+			logger.info("getUsersEvents, Autorizacia neuspesna, ziadane: " + userId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
+		logger.info("getUsersEvents, ziadane " + userId);
 		return new ResponseEntity<List<Event>>(service.getUsersEvents(userId), HttpStatus.OK);
 	}
 	
@@ -86,9 +100,10 @@ public class AccountController {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
+			logger.info("getEventsCreatedByUser, Autorizacia neuspesna, ziadane: " + userId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
+		logger.info("getEventsCreatedByUser, ziadane: ", userId);
 		return new ResponseEntity<List<Event>>(service.getEventsCreatedByUser(userId), HttpStatus.OK);
 	}
 	
@@ -97,12 +112,17 @@ public class AccountController {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
+			logger.info("applyToEvent, Autorizacia neuspesna, ziadane: userId:" + userId + " eventId:" + eventId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		if(service.applyToEvent(userId, eventId))
+		if(service.applyToEvent(userId, eventId)) {
+			logger.info("applyToEvent, ziadane: userId: " + userId + " eventId:" + eventId + " uspesne");
 			return new ResponseEntity<>(HttpStatus.OK);
-		else
+		}
+		else {
+			logger.info("applyToEvent, ziadane: userId: " + userId + " eventId:" + eventId + " neuspesne");
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 	}
 	
 	@DeleteMapping("/users/{userId}/event/{eventId}")
@@ -110,12 +130,17 @@ public class AccountController {
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
+			logger.info("removeApplicationToEvent, Autorizacia neuspesna, ziadane: userId:" + userId + " eventId:" + eventId);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		if(service.removeApplicationToEvent(userId, eventId))
+		if(service.removeApplicationToEvent(userId, eventId)) {
+			logger.info("removeApplicationToEvent, ziadane: userId: " + userId + " eventId:" + eventId + " uspesne");
 			return new ResponseEntity<>(HttpStatus.OK);
-		else
+		}
+		else {
+			logger.info("removeApplicationToEvent, ziadane: userId: " + userId + " eventId:" + eventId + " neuspesne");
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 	}
 	
 	

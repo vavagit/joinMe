@@ -3,6 +3,9 @@ package com.vava.app.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +19,10 @@ public class EventManagerService implements EventService{
 	@Autowired
 	private DatabaseManager db;
 	@Autowired
-	private PropertyManager manager;
-
+	private PropertyManager propManager;
+	
+    private Logger logger = LogManager.getLogger(EventManagerService.class);
+	
 	@Override
 	public Event getEventDetails(int eventId) {
 		return db.getEventDetails(eventId);
@@ -43,20 +48,24 @@ public class EventManagerService implements EventService{
 		int maxEventsToReturn = 1000;
 		
 		try {
-			increase = Integer.parseInt(manager.getProperty("increase"));
-			maxEventsToReturn = Integer.parseInt(manager.getProperty("maxEventsToReturn"));
+			logger.debug("getEventsFromRange, Nahravam hodnoty zo suboru vlastnosti");
+			increase = Integer.parseInt(propManager.getProperty("increase"));
+			maxEventsToReturn = Integer.parseInt(propManager.getProperty("maxEventsToReturn"));
 		} catch(NumberFormatException e) {
+			logger.catching(Level.WARN, e);
 			e.printStackTrace();
 		}
+		logger.debug("getEventsFromRange, Hodnoty nacitane increase: " + increase + " maxEventsToReturn: " + maxEventsToReturn);
 		
 		int offset = 0;
 		List<Event> selectedEvents = new ArrayList<>();
 		while(true) {
 			List<Event> events = db.getEvents(increase, offset);
-			
+			logger.debug("getEventsFromRange, Eventy ziskane offset: " + offset);
 			if(events.size() == 0)
 				return selectedEvents;
 			
+			logger.debug("getEventsFromRange, Kontorola vzdialenosti eventu");
 			//kontrola vzdialenosti eventu od zadaneho miesta
 			for(Event event : events) {
 				int distance = Location.calculateDistanceInKilometers(event.getEventLocation(), location);
