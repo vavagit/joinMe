@@ -39,7 +39,7 @@
 	</Appenders>
 	<Loggers>
 		
-		<Logger name="com.vava.app" additivity="false" level="INFO">
+		<Logger name="com.vava.app" additivity="false" level="DEBUG">
 			<AppenderRef ref="ErrorAppender" level="ERROR" />
 			<AppenderRef ref="ServicesAppender"/>
 		</Logger>

@@ -65,8 +65,10 @@ public class AccountsManagerService implements AccountService{
 	 * @return true ak je uzivatel prihlaseny a moze pristupovat k danej metode inak false
 	 */
 	public boolean authorization(List<String> authorizationList) {
-		if(authorizationList == null)
+		if(authorizationList == null) {
+			logger.debug("authorization, Prazdny list autorizacie: neuspech");
 			return false;
+		}
 		//prevod listu na string
 		String authorizationString = "";
 		for(String temp : authorizationList)

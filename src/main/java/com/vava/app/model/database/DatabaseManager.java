@@ -12,12 +12,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
 import com.vava.app.model.Event;
+import com.vava.app.model.SportCategory;
 import com.vava.app.model.User;
 
 /**
@@ -98,7 +100,7 @@ public class DatabaseManager {
 	}
 	
 	public List<Event> getUsersEvents(int userId) {
-		String query = "SELECT  events.*, c2.sport FROM events "
+		String query = "SELECT  events.*, c2.sport_en, c2.sport_sk FROM events "
 				+ "JOIN joined_users u ON events.id = u.id_event "
 				+ "JOIN category c2 ON events.sport_category_id = c2.id "
 				+ "WHERE u.id_user = ?";
@@ -159,7 +161,7 @@ public class DatabaseManager {
 	}
 	
 	public Event getEventDetails(int eventId) {
-		String query = "SELECT events.*, c2.sport FROM events JOIN category c2 ON events.sport_category_id = c2.id WHERE events.id = ?;";
+		String query = "SELECT events.*, c2.sport_en, c2.sport_sk FROM events JOIN category c2 ON events.sport_category_id = c2.id WHERE events.id = ?;";
 		List<Event> events = connection.query( query, new Object[] {eventId}, new EventRowMapper());
 		if(events.isEmpty()) {
 			logger.debug("getEventDetails, Event " + eventId + " nenajdeny");
@@ -187,7 +189,7 @@ public class DatabaseManager {
 			return false;
 		}
 		logger.debug("addUserToEvent, Uzivatel " + userId + ", kontrola miesta: Volne (" + (max - used) + ")");
-
+		
 		java.sql.Date date = new Date(new java.util.Date().getTime());
 		int affected = 0;
 		try {
@@ -248,10 +250,15 @@ public class DatabaseManager {
 	 * @return List {@link Event}
 	 */
 	public List<Event> getEvents(int limit, int offset){
-		String query = "SELECT  events.*, c2.sport FROM events " + 
+		String query = "SELECT  events.*, c2.sport_sk, c2.sport_en FROM events " + 
 				"JOIN category c2 ON events.sport_category_id = c2.id " + 
 				"LIMIT " + limit + "OFFSET " + offset;
 		logger.debug("getEvents, Spustenie query limit: " + limit + " offset: " + offset);
 		return connection.query(query, new EventRowMapper());
+	}
+	
+	public List<SportCategory> getCategories(){
+		String query = "SELECT * FROM category";
+		return connection.query(query, new BeanPropertyRowMapper<>(SportCategory.class));
 	}
 }

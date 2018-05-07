@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
+import com.vava.app.model.SportCategory;
 import com.vava.app.model.database.DatabaseManager;
 
 @Component("eventManager")
@@ -83,6 +84,11 @@ public class EventManagerService implements EventService{
 	@Override
 	public void updateEventDetails(Event updatedEvent) {
 		db.updateEventDetails(updatedEvent);
+	}
+
+	@Override
+	public List<SportCategory> getCategories() {
+		return db.getCategories();
 	}
 
 }

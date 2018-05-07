@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
+import com.vava.app.model.SportCategory;
 import com.vava.app.services.AccountsManagerService;
 import com.vava.app.services.EventManagerService;
 
@@ -45,16 +47,19 @@ public class EventController {
 		return null;
 	}
 
-	@GetMapping("/events/{radius}")
-	public ResponseEntity<List<Event>> getAllEvents(@PathVariable int radius, @RequestBody Location location,
+
+	@GetMapping(value = "/events", params = {"lat" , "lon", "radius"})
+	public ResponseEntity<List<Event>> getAllEvents(@RequestParam int radius, @RequestParam double lat, @RequestParam double lon,
 			@RequestHeader HttpHeaders header) {
+		logger.debug("getAllEvents, request");
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
-			logger.info("getAllEvents, Autorizacia neuspesna, ziadane: poloha: " + location + " radius: " + radius);
+			logger.info("getAllEvents, Autorizacia neuspesna, ziadane: poloha: (" + lat + "," + lon + ") radius: " + radius);
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
+		Location location = new Location(lat, lon);
 		logger.info("getAllEvents, ziadane: poloha: " + location + " radius: " + radius);
 		List<Event> events = service.getEventsFromRange(radius, location);
 		return new ResponseEntity<>(events, HttpStatus.OK);
@@ -137,4 +142,15 @@ public class EventController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@GetMapping("/events/categories")
+	public ResponseEntity<List<SportCategory>> getCategories(@RequestHeader HttpHeaders header) {
+		List<String> authorizationList = header.get("Authorization");
+		// overenie uzivatela
+		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("getCategories, Autorizacia neuspesna");
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		logger.info("getCategories, Vraciam kategorie");
+		return new ResponseEntity<List<SportCategory>>(service.getCategories(), HttpStatus.OK);
+	}
 }

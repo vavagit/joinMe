@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
+import com.vava.app.model.SportCategory;
 
 public interface EventService {
 	/**
@@ -39,4 +40,10 @@ public interface EventService {
 	 * @param updatedEvent objekt eventu so zmenenymi udajmi
 	 */
 	public void updateEventDetails(Event updatedEvent);
+	
+	/**
+	 * Vratenie listu vsetkych sporotovych kategorii
+	 * @return List kategorii
+	 */
+	public List<SportCategory> getCategories();
 }

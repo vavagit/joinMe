@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
+import com.vava.app.model.SportCategory;
 import com.vava.app.services.EventManagerService;
 
 @RunWith(SpringRunner.class)
@@ -33,6 +34,14 @@ public class EventsManagerTests {
 	public void getEventsTest() {
 		List<Event> events = service.getEventsFromRange(150, new Location(10,10));
 		assertTrue(events.size() > 0);
+	}
+	
+	@Test
+	public void testCategories() {
+		List<SportCategory> categories = service.getCategories();
+		for(SportCategory a : categories) {
+			System.out.println(a);
+		}
 	}
 	
 }
