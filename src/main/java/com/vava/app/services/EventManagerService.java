@@ -91,4 +91,9 @@ public class EventManagerService implements EventService{
 		return db.getCategories();
 	}
 
+	@Override
+	public List<Integer> getJoinedUsersOnEvent(int eventId) {
+		return db.getJoinedUsersOnEvent(eventId);
+	}
+
 }

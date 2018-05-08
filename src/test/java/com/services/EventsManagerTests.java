@@ -32,16 +32,19 @@ public class EventsManagerTests {
 
 	@Test(timeout = 1000)
 	public void getEventsTest() {
-		List<Event> events = service.getEventsFromRange(150, new Location(10,10));
-		assertTrue(events.size() > 0);
+		List<Event> events = service.getEventsFromRange(150, new Location(48,20));
+		assertTrue("Events: " + events.size(),events.size() > 0);
 	}
 	
 	@Test
 	public void testCategories() {
 		List<SportCategory> categories = service.getCategories();
-		for(SportCategory a : categories) {
-			System.out.println(a);
-		}
+		assertTrue(categories.size() > 0);
 	}
 	
+	@Test
+	public void getJoinedUsersTest() {
+		List<Integer> list = service.getJoinedUsersOnEvent(61);
+		assertTrue(list.size() == 5);
+	}
 }

@@ -153,4 +153,19 @@ public class EventController {
 		logger.info("getCategories, Vraciam kategorie");
 		return new ResponseEntity<List<SportCategory>>(service.getCategories(), HttpStatus.OK);
 	}
+	
+	@GetMapping("/events/{eventId}/users")
+	public ResponseEntity<List<Integer>> getJoinedUsersOnEvent(@PathVariable int eventId, @RequestHeader HttpHeaders header) {
+		logger.info("getJoinedUsersOnEvent, Poziadavka EventId: " + eventId);
+		List<String> authorizationList = header.get("Authorization");
+		// overenie uzivatela
+		if (!accountsManager.authorization(authorizationList)) {
+			logger.info("getJoinedUsersOnEvent, Autorizacia neuspesna EventId: " + eventId);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		logger.info("getJoinedUsersOnEvent, Spracovavam poziadavku EventId: " + eventId);
+		List<Integer> joinedUsers = service.getJoinedUsersOnEvent(eventId);
+		logger.info("getJoinedUsersOnEvent, Poziadavka spracovana");
+		return new ResponseEntity<List<Integer>>(joinedUsers, HttpStatus.OK);
+	}
 }

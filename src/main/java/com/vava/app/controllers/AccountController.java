@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.User;
+import com.vava.app.model.UserStatus;
 import com.vava.app.services.AccountsManagerService;
 
 @RestController
@@ -126,7 +127,8 @@ public class AccountController {
 	}
 	
 	@DeleteMapping("/users/{userId}/event/{eventId}")
-	public ResponseEntity<Void> removeApplicationToEvent(@PathVariable int userId, @PathVariable int eventId, @RequestHeader HttpHeaders header){
+	public ResponseEntity<Void> removeApplicationToEvent(@PathVariable int userId, @PathVariable int eventId, 
+			@RequestHeader HttpHeaders header){
 		List<String> authorizationList = header.get("Authorization");
 		//overenie uzivatela
 		if(!service.authorization(authorizationList)) {
@@ -143,5 +145,19 @@ public class AccountController {
 		}
 	}
 	
-	
+	@GetMapping("/users/{eventId}/event/{userId}")
+	public ResponseEntity<UserStatus> getUsersStatusToEvent(@PathVariable int eventId, @PathVariable int userId, 
+			@RequestHeader HttpHeaders header) {
+		logger.info("getUsersStatusToEvent, Poziadavka");
+		List<String> authorizationList = header.get("Authorization");
+		//overenie uzivatela
+		if(!service.authorization(authorizationList)) {
+			logger.info("getUsersStatusToEvent, Autorizacia neuspesna, ziadane: userId:" + userId + " eventId:" + eventId);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		
+		UserStatus status = service.getUserStatusToEvent(userId, eventId);
+		logger.info("getUsersStatusToEvent, Spracovana EventId: " + eventId + " userId:" + userId + " status:" + status);
+		return new ResponseEntity<> (status, HttpStatus.OK);
+	}
 }

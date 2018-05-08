@@ -46,4 +46,11 @@ public interface EventService {
 	 * @return List kategorii
 	 */
 	public List<SportCategory> getCategories();
+	
+	/**
+	 * Najde uzivatelov, ktori su prihlaseny na event 
+	 * @param eventId id eventu
+	 * @return Zoznam id uzivatelov prihlasenych na event
+	 */
+	public List<Integer> getJoinedUsersOnEvent(int eventId);
 }

@@ -261,4 +261,23 @@ public class DatabaseManager {
 		String query = "SELECT * FROM category";
 		return connection.query(query, new BeanPropertyRowMapper<>(SportCategory.class));
 	}
+
+	public boolean isUserCreator(int eventId, int userId) {
+		String query = "SELECT COUNT(id) FROM events WHERE id = ? AND user_id_creator = ?";
+		int value = connection.queryForObject(query, new Object[] {eventId, userId}, Integer.class);
+		//ak je riadkov viac ako 0 uzivatel je tvorca
+		return value > 0;
+	}
+	
+	public boolean isUserJoined(int eventId, int userId) {
+		String query = "SELECT COUNT(id) FROM joined_users WHERE id_event = ? AND id_user = ?";
+		int value = connection.queryForObject(query, new Object[] {eventId, userId}, Integer.class);
+		//ak je riadkov viac ako 0 uzivatel je na event prihlaseny
+		return value > 0;
+	}
+	
+	public List<Integer> getJoinedUsersOnEvent (int eventId) {
+		String query = "SELECT id_user FROM joined_users WHERE id_event = ?";
+		return connection.queryForList(query, new Object[] {eventId}, Integer.class);
+	}
 }

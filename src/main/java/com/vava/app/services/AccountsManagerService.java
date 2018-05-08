@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.User;
+import com.vava.app.model.UserStatus;
 import com.vava.app.model.database.DatabaseManager;
 /**
  * Spravca prihlaseni uzivatelov.Tvori rozhranie na komunikaciu 
@@ -136,6 +137,22 @@ public class AccountsManagerService implements AccountService{
 	@Override
 	public boolean removeApplicationToEvent(int userId, int eventId) {
 		return db.removeUserFromEvent(userId, eventId);
+	}
+
+	@Override
+	public UserStatus getUserStatusToEvent(int userId, int eventId) {
+		logger.debug("getUserStatusToEvent, zistenie vztahu medzi: EventId = " + eventId 
+				+ " UserId = " + userId);
+		if(db.isUserCreator(eventId, userId)) {
+			logger.debug("getUserStatusToEvent, Uzivatel" + userId + " je tvorca");
+			return UserStatus.CREATOR;
+		}
+		if(db.isUserJoined(eventId, userId)) {
+			logger.debug("getUserStatusToEvent, Uzivatel" + userId + " je zaregistrovany");
+			return UserStatus.JOINED;
+		}
+		logger.debug("getUserStatusToEvent, Uzivatel" + userId + " nie je zaregistrovany");
+		return UserStatus.NONE;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vava.app.model.Event;
 import com.vava.app.model.User;
+import com.vava.app.model.UserStatus;
 
 public interface AccountService {
 	/**
@@ -79,4 +80,12 @@ public interface AccountService {
 	 * @return true ak sa podarilo uzivatela odhlasit inak false
 	 */
 	public boolean removeApplicationToEvent(int userId, int eventId);
+	
+	/**
+	 * Vrati vztah uzivatela s eventom
+	 * @param userId id uzivatela
+	 * @param eventId id eventu
+	 * @return {@link UserStatus} status hovoriaci o vztahu
+	 */
+	public UserStatus getUserStatusToEvent(int userId, int eventId);
 }
