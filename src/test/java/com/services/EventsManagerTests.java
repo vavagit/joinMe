@@ -25,14 +25,14 @@ public class EventsManagerTests {
 	
 	@Test
 	public void createAndRemoveEventTest() {
-		//Event event = new Event(0, 45, "beh", "bude sa behat", new Date(2018, 9, 14), 15, 5, new SportCategory(1, "behanie"), "Beniakova 5a", new Location(10.0, 10.0));
+		//Event event = new Event(0, 45, "beh", "bude sa behat", new Date(2018, 9, 14), 15, 5, new SportCategory(1, "behanie", "running"), "Beniakova 5a", new Location(10.0, 10.0));
 		//assertTrue(service.createEvent(event));
 		//assertTrue(service.removeEvent(105));
 	}
 
 	@Test(timeout = 1000)
 	public void getEventsTest() {
-		List<Event> events = service.getEventsFromRange(150, new Location(48,20));
+		List<Event> events = service.getEventsFromRange(300, new Location(48,20));
 		assertTrue("Events: " + events.size(),events.size() > 0);
 	}
 	
@@ -42,9 +42,5 @@ public class EventsManagerTests {
 		assertTrue(categories.size() > 0);
 	}
 	
-	@Test
-	public void getJoinedUsersTest() {
-		List<Integer> list = service.getJoinedUsersOnEvent(61);
-		assertTrue(list.size() == 5);
-	}
+	
 }

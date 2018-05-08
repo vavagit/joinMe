@@ -1,6 +1,7 @@
 package com.vava.app.model.database;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -134,6 +135,9 @@ public class DatabaseManager {
 		int affected;
 		try {
 			affected = connection.update("INSERT INTO events VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)", new EventStatementSetter(newEvent));
+			int eventId = connection.queryForObject("SELECT max(id) FROM events", Integer.class);
+			connection.update("INSERT INTO  joined_users VALUES (DEFAULT, ?, ?, ?)", 
+								new Object[] {eventId, newEvent.getCreatorId(), Date.valueOf(LocalDate.now())});
 		} catch(DataAccessException exception) {
 			exception.printStackTrace();
 			logger.catching(Level.ERROR,exception);
@@ -189,7 +193,7 @@ public class DatabaseManager {
 			return false;
 		}
 		logger.debug("addUserToEvent, Uzivatel " + userId + ", kontrola miesta: Volne (" + (max - used) + ")");
-		
+				
 		java.sql.Date date = new Date(new java.util.Date().getTime());
 		int affected = 0;
 		try {
@@ -250,9 +254,13 @@ public class DatabaseManager {
 	 * @return List {@link Event}
 	 */
 	public List<Event> getEvents(int limit, int offset){
-		String query = "SELECT  events.*, c2.sport_sk, c2.sport_en FROM events " + 
-				"JOIN category c2 ON events.sport_category_id = c2.id " + 
-				"LIMIT " + limit + "OFFSET " + offset;
+		String query = "SELECT events.*,c2.sport_sk, c2.sport_en FROM events "
+				+ "JOIN category c2 ON events.sport_category_id = c2.id LEFT JOIN "
+				+ "(SELECT id_event as c,count(id_user) as numberOf "
+				+ "FROM joined_users GROUP BY id_event) u ON events.id = u.c "
+				+ "WHERE event_date>=current_date and "
+				+ "(u.numberOf is NULL OR u.numberOf < max_users ) " 
+				+ "LIMIT " + limit + " OFFSET " + offset;
 		logger.debug("getEvents, Spustenie query limit: " + limit + " offset: " + offset);
 		return connection.query(query, new EventRowMapper());
 	}
@@ -276,8 +284,8 @@ public class DatabaseManager {
 		return value > 0;
 	}
 	
-	public List<Integer> getJoinedUsersOnEvent (int eventId) {
-		String query = "SELECT id_user FROM joined_users WHERE id_event = ?";
-		return connection.queryForList(query, new Object[] {eventId}, Integer.class);
+	public List<User> getJoinedUsersOnEvent (int eventId) {
+		String query = "SELECT * FROM users, (SELECT id_user as id FROM joined_users WHERE id_event = ?) sub where sub.id = users.id";
+		return connection.query(query, new Object[] {eventId}, new UserRowMapper());
 	}
 }

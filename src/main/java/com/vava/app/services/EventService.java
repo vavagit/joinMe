@@ -5,6 +5,7 @@ import java.util.List;
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
 import com.vava.app.model.SportCategory;
+import com.vava.app.model.User;
 
 public interface EventService {
 	/**
@@ -50,7 +51,7 @@ public interface EventService {
 	/**
 	 * Najde uzivatelov, ktori su prihlaseny na event 
 	 * @param eventId id eventu
-	 * @return Zoznam id uzivatelov prihlasenych na event
+	 * @return Zoznam objektov uzivatelov prihlasenych na event
 	 */
-	public List<Integer> getJoinedUsersOnEvent(int eventId);
+	public List<User> getJoinedUsersOnEvent(int eventId);
 }

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
 import com.vava.app.model.SportCategory;
+import com.vava.app.model.User;
 import com.vava.app.services.AccountsManagerService;
 import com.vava.app.services.EventManagerService;
 
@@ -155,7 +156,7 @@ public class EventController {
 	}
 	
 	@GetMapping("/events/{eventId}/users")
-	public ResponseEntity<List<Integer>> getJoinedUsersOnEvent(@PathVariable int eventId, @RequestHeader HttpHeaders header) {
+	public ResponseEntity<List<User>> getJoinedUsersOnEvent(@PathVariable int eventId, @RequestHeader HttpHeaders header) {
 		logger.info("getJoinedUsersOnEvent, Poziadavka EventId: " + eventId);
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
@@ -164,8 +165,8 @@ public class EventController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		logger.info("getJoinedUsersOnEvent, Spracovavam poziadavku EventId: " + eventId);
-		List<Integer> joinedUsers = service.getJoinedUsersOnEvent(eventId);
+		List<User> joinedUsers = service.getJoinedUsersOnEvent(eventId);
 		logger.info("getJoinedUsersOnEvent, Poziadavka spracovana");
-		return new ResponseEntity<List<Integer>>(joinedUsers, HttpStatus.OK);
+		return new ResponseEntity<>(joinedUsers, HttpStatus.OK);
 	}
 }

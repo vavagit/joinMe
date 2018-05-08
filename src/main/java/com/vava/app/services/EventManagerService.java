@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.vava.app.model.Event;
 import com.vava.app.model.Location;
 import com.vava.app.model.SportCategory;
+import com.vava.app.model.User;
 import com.vava.app.model.database.DatabaseManager;
 
 @Component("eventManager")
@@ -92,8 +93,12 @@ public class EventManagerService implements EventService{
 	}
 
 	@Override
-	public List<Integer> getJoinedUsersOnEvent(int eventId) {
-		return db.getJoinedUsersOnEvent(eventId);
+	public List<User> getJoinedUsersOnEvent(int eventId) {
+		List<User> users = db.getJoinedUsersOnEvent(eventId);
+		for(User user : users) {
+			user.setPassword("");
+		}
+		return users;
 	}
 
 }
