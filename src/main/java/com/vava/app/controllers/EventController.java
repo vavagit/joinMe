@@ -129,17 +129,17 @@ public class EventController {
 	 *            - objekt obsahujuci updateovane udaje o aktualnom evente
 	 * @return
 	 */
-	@PutMapping("/events")
-	public ResponseEntity<Void> updateEventDetails(@PathVariable int eventId, @RequestBody Event updatedEvent,
+	@PutMapping("/events/update")
+	public ResponseEntity<Void> updateEventDetails(@RequestBody Event updatedEvent,
 			@RequestHeader HttpHeaders header) {
 		List<String> authorizationList = header.get("Authorization");
 		// overenie uzivatela
 		if (!accountsManager.authorization(authorizationList)) {
-			logger.info("updateEventDetails, Autorizacia neuspesna, ziadane: " + eventId);
+			logger.info("updateEventDetails, Autorizacia neuspesna, ziadane: " + updatedEvent.getEventId());
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		service.updateEventDetails(updatedEvent);
-		logger.info("updateEventDetails, zmena udajov: eventId " + eventId + " dokoncena");
+		logger.info("updateEventDetails, zmena udajov: eventId " + updatedEvent.getEventId() + " dokoncena");
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
